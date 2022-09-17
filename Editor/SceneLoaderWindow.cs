@@ -11,7 +11,6 @@ using UnityEngine.SceneManagement;
 
 namespace PolyternityStuff.Editor
 {
-    [InitializeOnLoad]
     public class SceneLoaderWindow : EditorWindow
     {
         private const string EditorPrefsScenesKey = "SceneLoaderWindow_Scenes";
@@ -19,15 +18,16 @@ namespace PolyternityStuff.Editor
         private static string _sceneGroupCollectionPath;
 
         private static string[] _scenePathsToLoad;
-    
-        static SceneLoaderWindow()
-        {
-            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
-        }
-
+        
         private void OnEnable()
         {
             _sceneGroupCollection = AssetUtils.GetScriptableObject<SceneGroupCollection>(out _sceneGroupCollectionPath);
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         }
 
         [MenuItem("Window/Scene Loader")]
