@@ -12,8 +12,13 @@ namespace Polyternity.Editor
             
             GUI.enabled = false;
 
-            PropertyDrawerFinder.FindDrawerForProperty(property).OnGUI(position, property, label);
+            var customDrawer = PropertyDrawerFinder.FindDrawerForProperty(property);
             
+            if (customDrawer == null)
+                EditorGUI.PropertyField(position, property, label);
+            else
+                customDrawer.OnGUI(position, property, label);
+
             GUI.enabled = previousGUIState;
         }
     }

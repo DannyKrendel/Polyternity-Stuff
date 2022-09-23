@@ -13,38 +13,35 @@ namespace Polyternity.Editor
     {
         private struct TypeAndFieldInfo
         {
-            internal Type type;
-            internal FieldInfo fi;
+            internal Type Type;
+            internal FieldInfo FieldInfo;
         }
 
         // Rev 3, be more evil with more cache!
-        private static readonly Dictionary<int, TypeAndFieldInfo> s_PathHashVsType = new();
+        private static readonly Dictionary<int, TypeAndFieldInfo> PathHashVsType = new();
 
-        private static readonly Dictionary<Type, PropertyDrawer> s_TypeVsDrawerCache = new();
+        private static readonly Dictionary<Type, PropertyDrawer> TypeVsDrawerCache = new();
 
         /// <summary>
         /// Searches for custom property drawer for given property, or returns null if no custom property drawer was found.
         /// </summary>
         public static PropertyDrawer FindDrawerForProperty(SerializedProperty property)
         {
-            PropertyDrawer drawer;
-            TypeAndFieldInfo tfi;
-
             var pathHash = _GetUniquePropertyPathHash(property);
 
-            if (!s_PathHashVsType.TryGetValue(pathHash, out tfi))
+            if (!PathHashVsType.TryGetValue(pathHash, out var tfi))
             {
-                tfi.type = _GetPropertyType(property, out tfi.fi);
-                s_PathHashVsType[pathHash] = tfi;
+                tfi.Type = _GetPropertyType(property, out tfi.FieldInfo);
+                PathHashVsType[pathHash] = tfi;
             }
 
-            if (tfi.type == null)
+            if (tfi.Type == null)
                 return null;
 
-            if (!s_TypeVsDrawerCache.TryGetValue(tfi.type, out drawer))
+            if (!TypeVsDrawerCache.TryGetValue(tfi.Type, out var drawer))
             {
-                drawer = FindDrawerForType(tfi.type);
-                s_TypeVsDrawerCache.Add(tfi.type, drawer);
+                drawer = FindDrawerForType(tfi.Type);
+                TypeVsDrawerCache.Add(tfi.Type, drawer);
             }
 
             if (drawer != null)
@@ -57,7 +54,7 @@ namespace Polyternity.Editor
                 var fieldInfoBacking =
                     typeof(PropertyDrawer).GetField("m_FieldInfo", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (fieldInfoBacking != null)
-                    fieldInfoBacking.SetValue(drawer, tfi.fi);
+                    fieldInfoBacking.SetValue(drawer, tfi.FieldInfo);
             }
 
             return drawer;
