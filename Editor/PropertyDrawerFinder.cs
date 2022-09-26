@@ -84,10 +84,19 @@ namespace Polyternity.Editor
         {
             var fullPath = property.propertyPath.Split('.');
 
+            fi = null;
+
             // fi is FieldInfo in perspective of parentType (property.serializedObject.targetObject)
             // NonPublic to support [SerializeField] vars
             var parentType = property.serializedObject.targetObject.GetType();
-            fi = parentType.GetField(fullPath[0], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            while (true)
+            {
+                if (fi != null || parentType == null)
+                    break;
+                
+                fi = parentType.GetField(fullPath[0], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                parentType = parentType.BaseType;
+            }
             resolvedType = fi.FieldType;
 
             for (var i = 1; i < fullPath.Length; i++)
