@@ -173,12 +173,12 @@ namespace Polyternity.Editor
             if (container == null)
                 return null;
             var type = container.GetType();
-            var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            var members = type.GetMemberRecursive(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             for (int i = 0; i < members.Length; ++i)
             {
                 if (members[i] is FieldInfo field)
                     return field.GetValue(container);
-                else if (members[i] is PropertyInfo property)
+                if (members[i] is PropertyInfo property)
                     return property.GetValue(container);
             }
             return null;
@@ -187,7 +187,7 @@ namespace Polyternity.Editor
         private static void SetMemberValue(object container, string name, object value)
         {
             var type = container.GetType();
-            var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            var members = type.GetMemberRecursive(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             for (int i = 0; i < members.Length; ++i)
             {
                 if (members[i] is FieldInfo field)
@@ -195,7 +195,7 @@ namespace Polyternity.Editor
                     field.SetValue(container, value);
                     return;
                 }
-                else if (members[i] is PropertyInfo property)
+                if (members[i] is PropertyInfo property)
                 {
                     property.SetValue(container, value);
                     return;

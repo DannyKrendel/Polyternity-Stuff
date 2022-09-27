@@ -83,29 +83,21 @@ namespace Polyternity.Editor
         private static void _GetPropertyFieldInfo(SerializedProperty property, out Type resolvedType, out FieldInfo fi)
         {
             var fullPath = property.propertyPath.Split('.');
-
-            fi = null;
-
-            // fi is FieldInfo in perspective of parentType (property.serializedObject.targetObject)
-            // NonPublic to support [SerializeField] vars
             var parentType = property.serializedObject.targetObject.GetType();
-            while (true)
-            {
-                if (fi != null || parentType == null)
-                    break;
-                
-                fi = parentType.GetField(fullPath[0], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                parentType = parentType.BaseType;
-            }
+            
+            fi = parentType.GetFieldRecursive(fullPath[0], 
+                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            
             resolvedType = fi.FieldType;
 
             for (var i = 1; i < fullPath.Length; i++)
-            // To properly handle array and list
-            // This has deeper rabbit hole, see
-            // unitycsreference\Editor\Mono\ScriptAttributeGUI\ScriptAttributeUtility.cs GetFieldInfoFromPropertyPath
-            // here we will simplify it for now (could break)
+            {
+                // To properly handle array and list
+                // This has deeper rabbit hole, see
+                // unitycsreference\Editor\Mono\ScriptAttributeGUI\ScriptAttributeUtility.cs GetFieldInfoFromPropertyPath
+                // here we will simplify it for now (could break)
 
-            // If we are at 'Array' section like in `tiles.Array.data[0].tilemodId`
+                // If we are at 'Array' section like in `tiles.Array.data[0].tilemodId`
                 if (_IsArrayPropertyPath(fullPath, i))
                 {
                     if (fi.FieldType.IsArray)
@@ -121,6 +113,7 @@ namespace Polyternity.Editor
                     fi = resolvedType.GetField(fullPath[i]);
                     resolvedType = fi.FieldType;
                 }
+            }
         }
 
         private static bool _IsArrayPropertyPath(string[] fullPath, int i)
