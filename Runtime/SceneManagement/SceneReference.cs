@@ -9,7 +9,7 @@ namespace PolyternityStuff.SceneManagement
     [Serializable]
     public class SceneReference : ISerializationCallbackReceiver
     {
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         [SerializeField] private Object _sceneAsset;
         private bool IsValidSceneAsset
         {
@@ -19,7 +19,7 @@ namespace PolyternityStuff.SceneManagement
                 return _sceneAsset is SceneAsset;
             }
         }
-#endif
+        #endif
 
         [SerializeField] private string _scenePath = string.Empty;
 
@@ -27,19 +27,19 @@ namespace PolyternityStuff.SceneManagement
         {
             get
             {
-#if UNITY_EDITOR
+                #if UNITY_EDITOR
                 return EditorSceneHelper.GetPathFromAsset(_sceneAsset as SceneAsset);
-#else
+                #else
                 return _scenePath;
-#endif
+                #endif
             }
             set
             {
                 _scenePath = value;
                 BuildIndex = SceneUtility.GetBuildIndexByScenePath(_scenePath);
-#if UNITY_EDITOR
+                #if UNITY_EDITOR
                 _sceneAsset = EditorSceneHelper.GetAssetFromPath(_scenePath);
-#endif
+                #endif
             }
         }
 
@@ -68,19 +68,19 @@ namespace PolyternityStuff.SceneManagement
     
         public void OnBeforeSerialize()
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             HandleBeforeSerialize();
-#endif        
+            #endif        
         }
 
         public void OnAfterDeserialize()
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             HandleAfterDeserialize();
-#endif
+            #endif
         }
     
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         private void HandleBeforeSerialize()
         {
             // Asset is invalid but have Path to try and recover from
@@ -117,6 +117,6 @@ namespace PolyternityStuff.SceneManagement
         {
             return _sceneAsset == null ? "Missing scene" : ScenePath;
         }
-#endif
+        #endif
     }
 }
