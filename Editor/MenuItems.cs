@@ -4,7 +4,7 @@ namespace Polyternity.Editor
 {
     public static class MenuItems
     {
-        [MenuItem("Tools/Set Selected Objects Dirty")]
+        [MenuItem("(๑•ᴗ•๑)/Set Selected Objects Dirty")]
         private static void SetSelectedObjectsDirty() 
         {
             foreach (var o in Selection.objects) 

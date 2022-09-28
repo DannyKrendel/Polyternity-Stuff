@@ -2,14 +2,28 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor
+namespace Polyternity.Editor.Utils
 {
     public static class AssetUtils
     {
-        public static T GetScriptableObject<T>(out string path, string name = null) where T : ScriptableObject
+        /// <summary>
+        /// Finds and loads ScriptableObject by type.
+        /// </summary>
+        public static T GetScriptableObject<T>(out string path) where T : ScriptableObject
         {
             var paths = AssetDatabase.FindAssets($"t:{typeof(T).Name}").Select(AssetDatabase.GUIDToAssetPath);
-            path = name == null ? paths.FirstOrDefault() : paths.FirstOrDefault(p => p.EndsWith(name + ".asset"));
+            path = paths.FirstOrDefault();
+            
+            return string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<T>(path);
+        }
+        
+        /// <summary>
+        /// Finds and loads ScriptableObject by type and name.
+        /// </summary>
+        public static T GetScriptableObject<T>(string name, out string path) where T : ScriptableObject
+        {
+            var paths = AssetDatabase.FindAssets($"t:{typeof(T).Name}").Select(AssetDatabase.GUIDToAssetPath);
+            path = paths.FirstOrDefault(p => p.EndsWith(name + ".asset"));
             
             return string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<T>(path);
         }

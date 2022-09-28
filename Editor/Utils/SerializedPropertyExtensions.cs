@@ -2,10 +2,11 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Polyternity.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor
+namespace Polyternity.Editor.Utils
 {
     public static class SerializedPropertyExtensions
     {
@@ -56,7 +57,9 @@ namespace Polyternity.Editor
             return obj;
         }
         
+        /// <summary>
         /// (Extension) Get the value of the serialized property.
+        /// </summary>
         public static object GetValue(this SerializedProperty property)
         {
             string propertyPath = property.propertyPath;
@@ -67,7 +70,9 @@ namespace Polyternity.Editor
             return value;
         }
         
+        /// <summary>
         /// (Extension) Set the value of the serialized property.
+        /// </summary>
         public static void SetValue(this SerializedProperty property, object value)
         {
             Undo.RecordObject(property.serializedObject.targetObject, $"Set {property.name}");
@@ -78,8 +83,10 @@ namespace Polyternity.Editor
             property.serializedObject.ApplyModifiedProperties();
         }
         
+        /// <summary>
         /// (Extension) Set the value of the serialized property, but do not record the change.
         /// The change will not be persisted unless you call SetDirty and ApplyModifiedProperties.
+        /// </summary>
         public static void SetValueNoRecord(this SerializedProperty property, object value)
         {
             string propertyPath = property.propertyPath;

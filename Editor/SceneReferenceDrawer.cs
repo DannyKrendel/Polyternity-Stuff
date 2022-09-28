@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Polyternity.Editor;
+using Polyternity.Editor.Utils;
 using PolyternityStuff.SceneManagement;
 using UnityEditor;
 using UnityEngine;

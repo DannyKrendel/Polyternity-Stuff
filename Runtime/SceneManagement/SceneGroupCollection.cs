@@ -14,7 +14,8 @@ namespace PolyternityStuff.SceneManagement
 
         public SceneGroup Find(string name)
         {
-            return _sceneGroups.FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            return _sceneGroups.FirstOrDefault(x =>
+                string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
     
         public bool IsSceneInGroup(string groupName, Scene scene) =>

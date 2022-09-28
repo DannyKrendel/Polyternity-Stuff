@@ -1,11 +1,13 @@
 using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace PolyternityStuff.SceneManagement
 {
     public static class EditorSceneHelper
     {
+        #if UNITY_EDITOR
         private static string[] _scenePaths;
         public static string[] ScenePaths
         {
@@ -34,6 +36,6 @@ namespace PolyternityStuff.SceneManagement
         {
             return sceneAsset == null ? string.Empty : AssetDatabase.GetAssetPath(sceneAsset);
         }
+        #endif
     }
 }
-#endif

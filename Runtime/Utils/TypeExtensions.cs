@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Polyternity.Editor
+namespace Polyternity.Utils
 {
     public static class TypeExtensions
     {
+        /// <summary>
+        /// Find field in type and its base types.
+        /// </summary>
         public static FieldInfo GetFieldRecursive(this Type type, string name, BindingFlags bindingAttr)
         {
             if (string.IsNullOrEmpty(name)) 
@@ -26,6 +29,9 @@ namespace Polyternity.Editor
             return fieldInfo;
         }
 
+        /// <summary>
+        /// Find member in type and its base types.
+        /// </summary>
         public static MemberInfo[] GetMemberRecursive(this Type type, string name, BindingFlags bindingAttr)
         {
             if (string.IsNullOrEmpty(name)) 

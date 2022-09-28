@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Polyternity.Utils;
 using UnityEditor;
 
-namespace Polyternity.Editor
+namespace Polyternity.Editor.Utils
 {
     /// <summary>
     /// Finds custom property drawer for a given type.
@@ -16,8 +17,7 @@ namespace Polyternity.Editor
             internal Type Type;
             internal FieldInfo FieldInfo;
         }
-
-        // Rev 3, be more evil with more cache!
+        
         private static readonly Dictionary<int, TypeAndFieldInfo> PathHashVsType = new();
 
         private static readonly Dictionary<Type, PropertyDrawer> TypeVsDrawerCache = new();
@@ -60,6 +60,58 @@ namespace Polyternity.Editor
             return drawer;
         }
 
+        /// <summary>
+        /// Returns custom property drawer for type if one could be found, or null if
+        /// no custom property drawer could be found. Does not use cached values, so it's resource intensive.
+        /// </summary>
+        public static PropertyDrawer FindDrawerForType(Type propertyType)
+        {
+            var cpdType = typeof(CustomPropertyDrawer);
+            var typeField = cpdType.GetField("m_Type", BindingFlags.NonPublic | BindingFlags.Instance);
+            var childField = cpdType.GetField("m_UseForChildren", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // Optimization note:
+            // For benchmark (on DungeonLooter 0.8.4)
+            // - Original, search all assemblies and classes: 250 msec
+            // - Wappen optimized, search only specific name assembly and classes: 5 msec
+
+            foreach (var assem in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                // Wappen optimization: filter only "*Editor" assembly
+                if (!assem.FullName.Contains("Editor"))
+                    continue;
+
+                foreach (var candidate in assem.GetTypes())
+                {
+                    // Wappen optimization: filter only "*Drawer" class name, like "SomeTypeDrawer"
+                    if (!candidate.Name.Contains("Drawer"))
+                        continue;
+
+                    // See if this is a class that has [CustomPropertyDrawer( typeof( T ) )]
+                    foreach (var a in candidate.GetCustomAttributes(typeof(CustomPropertyDrawer)))
+                        if (a.GetType().IsSubclassOf(typeof(CustomPropertyDrawer)) ||
+                            a.GetType() == typeof(CustomPropertyDrawer))
+                        {
+                            var drawerAttribute = (CustomPropertyDrawer)a;
+                            var drawerType = (Type)typeField.GetValue(drawerAttribute);
+                            if (drawerType == propertyType ||
+                                (bool)childField.GetValue(drawerAttribute) && propertyType.IsSubclassOf(drawerType) ||
+                                (bool)childField.GetValue(drawerAttribute) &&
+                                IsGenericSubclass(drawerType, propertyType))
+                                if (candidate.IsSubclassOf(typeof(PropertyDrawer)))
+                                {
+                                    // Technical note: PropertyDrawer.fieldInfo will not available via this drawer
+                                    // It has to be manually setup by caller.
+                                    var drawer = (PropertyDrawer)Activator.CreateInstance(candidate);
+                                    return drawer;
+                                }
+                        }
+                }
+            }
+
+            return null;
+        }
+        
         /// <summary>
         /// Gets type of a serialized property.
         /// </summary>
@@ -139,58 +191,6 @@ namespace Polyternity.Editor
 
             containedType = null;
             return false;
-        }
-
-        /// <summary>
-        /// Returns custom property drawer for type if one could be found, or null if
-        /// no custom property drawer could be found. Does not use cached values, so it's resource intensive.
-        /// </summary>
-        public static PropertyDrawer FindDrawerForType(Type propertyType)
-        {
-            var cpdType = typeof(CustomPropertyDrawer);
-            var typeField = cpdType.GetField("m_Type", BindingFlags.NonPublic | BindingFlags.Instance);
-            var childField = cpdType.GetField("m_UseForChildren", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            // Optimization note:
-            // For benchmark (on DungeonLooter 0.8.4)
-            // - Original, search all assemblies and classes: 250 msec
-            // - Wappen optimized, search only specific name assembly and classes: 5 msec
-
-            foreach (var assem in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                // Wappen optimization: filter only "*Editor" assembly
-                if (!assem.FullName.Contains("Editor"))
-                    continue;
-
-                foreach (var candidate in assem.GetTypes())
-                {
-                    // Wappen optimization: filter only "*Drawer" class name, like "SomeTypeDrawer"
-                    if (!candidate.Name.Contains("Drawer"))
-                        continue;
-
-                    // See if this is a class that has [CustomPropertyDrawer( typeof( T ) )]
-                    foreach (var a in candidate.GetCustomAttributes(typeof(CustomPropertyDrawer)))
-                        if (a.GetType().IsSubclassOf(typeof(CustomPropertyDrawer)) ||
-                            a.GetType() == typeof(CustomPropertyDrawer))
-                        {
-                            var drawerAttribute = (CustomPropertyDrawer)a;
-                            var drawerType = (Type)typeField.GetValue(drawerAttribute);
-                            if (drawerType == propertyType ||
-                                (bool)childField.GetValue(drawerAttribute) && propertyType.IsSubclassOf(drawerType) ||
-                                (bool)childField.GetValue(drawerAttribute) &&
-                                IsGenericSubclass(drawerType, propertyType))
-                                if (candidate.IsSubclassOf(typeof(PropertyDrawer)))
-                                {
-                                    // Technical note: PropertyDrawer.fieldInfo will not available via this drawer
-                                    // It has to be manually setup by caller.
-                                    var drawer = (PropertyDrawer)Activator.CreateInstance(candidate);
-                                    return drawer;
-                                }
-                        }
-                }
-            }
-
-            return null;
         }
 
         /// <summary>
