@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Polyternity.Utils
+namespace PolyternityStuff.Utils
 {
     public static class GeometryUtils
     {

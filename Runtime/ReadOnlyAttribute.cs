@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Polyternity
+namespace PolyternityStuff
 {
     public class ReadOnlyAttribute : PropertyAttribute { }
 }

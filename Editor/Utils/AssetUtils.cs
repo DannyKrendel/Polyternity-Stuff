@@ -2,10 +2,28 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor.Utils
+namespace PolyternityStuff.Editor.Utils
 {
     public static class AssetUtils
     {
+        /// <summary>
+        /// Finds and loads the first asset by filter in given folders.
+        /// </summary>
+        public static T FindAndLoadAsset<T>(string filter, string[] searchInFolders) where T : Object
+        {
+            var foundAssets = AssetDatabase.FindAssets(filter, searchInFolders);
+
+            if (foundAssets == null || foundAssets.Length == 0)
+            {
+                Debug.LogError("Asset was not found");
+                return null;
+            }
+
+            var assetPath = AssetDatabase.GUIDToAssetPath(foundAssets[0]);
+        
+            return AssetDatabase.LoadAssetAtPath<T>(assetPath);
+        }
+        
         /// <summary>
         /// Finds and loads ScriptableObject by type.
         /// </summary>

@@ -2,7 +2,7 @@ using PolyternityStuff.SceneManagement;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor
+namespace PolyternityStuff.Editor
 {
     [CustomPropertyDrawer(typeof(SceneGroup))]
     public class SceneGroupDrawer : PropertyDrawer

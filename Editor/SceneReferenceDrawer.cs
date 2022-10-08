@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
-using Polyternity.Editor.Utils;
+using PolyternityStuff.Editor.Utils;
 using PolyternityStuff.SceneManagement;
+using PolyternityStuff.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor
+namespace PolyternityStuff.Editor
 {
     [CustomPropertyDrawer(typeof(SceneReference))]
     public class SceneReferenceDrawer : PropertyDrawer

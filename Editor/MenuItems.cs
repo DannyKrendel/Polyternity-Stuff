@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace Polyternity.Editor
+namespace PolyternityStuff.Editor
 {
     public static class MenuItems
     {

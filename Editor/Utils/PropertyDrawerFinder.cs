@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Polyternity.Utils;
+using PolyternityStuff.Utils;
 using UnityEditor;
 
-namespace Polyternity.Editor.Utils
+namespace PolyternityStuff.Editor.Utils
 {
     /// <summary>
     /// Finds custom property drawer for a given type.

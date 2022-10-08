@@ -1,8 +1,8 @@
-﻿using Polyternity.Editor.Utils;
+﻿using PolyternityStuff.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor
+namespace PolyternityStuff.Editor
 {
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer

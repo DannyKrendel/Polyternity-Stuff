@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Polyternity.Editor;
-using Polyternity.Editor.Utils;
+using PolyternityStuff.Editor.Utils;
 using PolyternityStuff.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;

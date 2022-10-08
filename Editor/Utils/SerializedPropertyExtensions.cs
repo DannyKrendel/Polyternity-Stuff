@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Polyternity.Utils;
+using PolyternityStuff.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Polyternity.Editor.Utils
+namespace PolyternityStuff.Editor.Utils
 {
     public static class SerializedPropertyExtensions
     {

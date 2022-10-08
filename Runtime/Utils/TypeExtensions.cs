@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Polyternity.Utils
+namespace PolyternityStuff.Utils
 {
     public static class TypeExtensions
     {
