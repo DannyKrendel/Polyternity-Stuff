@@ -14,11 +14,6 @@ namespace PolyternityStuff
                 if (_instance == null)
                 {
                     _instance = FindObjectOfType<T>();
-                    if (_instance == null)
-                    {
-                        var singleton = new GameObject(typeof(T) + " (Singleton)");
-                        _instance = singleton.AddComponent<T>();
-                    }
                 }
                 return _instance;
             }
